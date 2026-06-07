@@ -15,7 +15,7 @@ export default function DonorSearch() {
         "Dolpa", "Tanahun", "Taplejung", "Tehrathum", "Dang", "Darchula", "Dolakha", "Dhading", "Dhankuta", 
         "Dhanusha", "Nawalpur", "Parasi", "Nuwakot", "Parbat", "Parsa", "Palpa", "Panchthar", "Pyuthan", 
         "Banke", "Bajura", "Baglung", "Bara", "Bajhang", "Bardiya", "Bhaktapur", "Bhojpur", "Makwanpur", 
-        "Manang", "Mahottari", "Mugu", "Mustang", "Morang", "Myagdi", "Rukum East", "Rukum West", "Rupandehi", 
+        "Manang", "Mahottary", "Mugu", "Mustang", "Morang", "Myagdi", "Rukum East", "Rukum West", "Rupandehi", 
         "Rautahat", "Rasuwa", "Ramechhap", "Rolpa", "Lamjung", "Lalitpur", "Sankhuwasabha", "Saptari", 
         "Sarlahi", "Salyan", "Sindhupalchok", "Sindhuli", "Siraha", "Sunsari", "Surkhet", "Solukhumbu", 
         "Syangja", "Humla", "Chitwan", "Jhapa", "Baitadi"
@@ -85,7 +85,7 @@ export default function DonorSearch() {
                         <div className="space-y-3">
                             <a href={`tel:+977${selectedDonor.Phone}`} className="block text-center bg-green-600 text-white py-3 rounded-xl font-bold">Call Now</a>
                             <a 
-                                href={`https://wa.me/+977${selectedDonor.Phone}?text=नमस्ते ${selectedDonor.Name} जी, मैले 'Blood Management System' बाट तपाईंको जानकारी पाएको हुँ। ${selectedDonor.BloodGroup} रगतको आवश्यकता परेकोले के तपाईं रक्तदान गर्न सक्नुहुन्छ? कृपया जानकारी दिनुहोला। धन्यवाद।`} 
+                                href={`https://wa.me/+977${selectedDonor.Phone}?text=${encodeURIComponent(`नमस्ते ${selectedDonor.Name} जी, मैले 'Blood Management System' बाट तपाईंको जानकारी पाएको हुँ। ${selectedDonor.BloodGroup} रगतको आवश्यकता परेकोले के तपाईं रक्तदान गर्न सक्नुहुन्छ? कृपया जानकारी दिनुहोला। धन्यवाद।`)}`} 
                                 target="_blank" 
                                 className="block text-center bg-emerald-500 text-white py-3 rounded-xl font-bold"
                             >
