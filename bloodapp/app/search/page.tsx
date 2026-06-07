@@ -23,7 +23,7 @@ export default function DonorSearch() {
 
     const handleSearch = async () => {
         if (!bloodGroup || !district) {
-            alert("कृपया ब्लड ग्रुप र जिल्ला दुवै चयन गर्नुहोस्!");
+            alert("कृपया ब्लड ग्रुप र जिल्ला दुवै चयन गर्नुहोस् !");
             return;
         }
         setLoading(true);
@@ -84,7 +84,7 @@ export default function DonorSearch() {
                         <div className="space-y-3">
                             <a href={`tel:+977${selectedDonor.Phone}`} className="block text-center bg-green-600 text-white py-3 rounded-xl font-bold">Call Now</a>
                             <a 
-                                href={`https://wa.me/+977${selectedDonor.Phone}?text=${encodeURIComponent(`नमस्ते ${selectedDonor.Name} जी, मैले 'Blood Management System' बाट तपाईंको जानकारी पाएको हुँ। ${selectedDonor.BloodGroup} रगतको आवश्यकता परेकोले के तपाईं रक्तदान गर्न सक्नुहुन्छ? कृपया जानकारी दिनुहोला। धन्यवाद।`)}`} 
+                                href={`https://wa.me/+977${selectedDonor.Phone}?text=${encodeURIComponent(`नमस्ते ${selectedDonor.Name} जी, मैले 'Blood Management System' बाट तपाईंको जानकारी पाएको हुँ । ${selectedDonor.BloodGroup} रगतको आवश्यकता परेकोले के तपाईं रक्तदान गर्न सक्नुहुन्छ ? कृपया जानकारी दिनुहोला । धन्यवाद ।`)}`} 
                                 target="_blank" 
                                 className="block text-center bg-emerald-500 text-white py-3 rounded-xl font-bold"
                             >
