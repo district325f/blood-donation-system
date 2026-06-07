@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from 'react';
 import Link from 'next/link';
 
@@ -8,22 +8,35 @@ export default function DonorSearch() {
     const [district, setDistrict] = useState('');
     const [loading, setLoading] = useState(false);
 
+    // ७७ जिल्लाहरूको English नाम (तपाईंको गुगल सिटसँग मिल्ने गरी)
+    const districtList = [
+        "Achham", "Arghakhanchi", "Ilam", "Udayapur", "Okhaldhunga", "Kanchanpur", "Kapilvastu", "Kathmandu", 
+        "Kavrepalanchok", "Kalikot", "Kaski", "Kailali", "Khotang", "Gulmi", "Jumla", "Dadeldhura", "Doti", 
+        "Dolpa", "Tanahun", "Taplejung", "Tehrathum", "Dang", "Darchula", "Dolakha", "Dhading", "Dhankuta", 
+        "Dhanusha", "Nawalpur", "Parasi", "Nuwakot", "Parbat", "Parsa", "Palpa", "Panchthar", "Pyuthan", 
+        "Banke", "Bajura", "Baglung", "Bara", "Bajhang", "Bardiya", "Bhaktapur", "Bhojpur", "Makwanpur", 
+        "Manang", "Mahottari", "Mugu", "Mustang", "Morang", "Myagdi", "Rukum East", "Rukum West", "Rupandehi", 
+        "Rautahat", "Rasuwa", "Ramechhap", "Rolpa", "Lamjung", "Lalitpur", "Sankhuwasabha", "Saptari", 
+        "Sarlahi", "Salyan", "Sindhupalchok", "Sindhuli", "Siraha", "Sunsari", "Surkhet", "Solukhumbu", 
+        "Syangja", "Humla", "Chitwan", "Jhapa", "Baitadi", "Khotang", "Dolpa"
+    ];
+
     const handleSearch = async () => {
         setLoading(true);
-        // आफ्नो डोनर सिटको API URL यहाँ राख्नुहोस्
-        const API_URL = "https://sheetdb.io/api/v1/aznz062wqigwm?sheet=Donors";
-
+        const API_URL = "https://sheetdb.io/api/v1/aznz062wqigwm?sheet=Donors"; 
+        
         try {
             const res = await fetch(API_URL);
             const data = await res.json();
-
-            const filtered = data.filter((d: any) =>
+            
+            // Filter: District को नाम case-insensitive म्याच गराउने
+            const filtered = data.filter((d: any) => 
                 (bloodGroup ? d.BloodGroup === bloodGroup : true) &&
                 (district ? d.District.toLowerCase() === district.toLowerCase() : true)
             );
             setDonors(filtered);
         } catch (err) {
-            alert("डाटा लोड गर्न समस्या भयो।");
+            alert("Error loading data.");
         } finally {
             setLoading(false);
         }
@@ -32,15 +45,20 @@ export default function DonorSearch() {
     return (
         <div className="min-h-screen bg-slate-50 p-6">
             <div className="max-w-xl mx-auto bg-white p-8 rounded-2xl shadow-lg border border-slate-100">
-                <Link href="/requests" className="text-sm text-blue-600 hover:underline mb-4 block">&larr; Back to Request</Link>
+                <Link href="/" className="text-sm text-blue-600 hover:underline mb-4 block">&larr; Home</Link>
                 <h2 className="text-2xl font-bold text-red-600 mb-6 text-center">Donor Search</h2>
-
+                
                 <div className="space-y-4 mb-8">
                     <select onChange={(e) => setBloodGroup(e.target.value)} className="w-full p-3 border rounded-xl">
-                        <option value="">सबै ब्लड ग्रुप (All)</option>
+                        <option value="">All Blood Groups</option>
                         {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(bg => <option key={bg} value={bg}>{bg}</option>)}
                     </select>
-                    <input type="text" placeholder="जिल्ला लेख्नुहोस् (District)" onChange={(e) => setDistrict(e.target.value)} className="w-full p-3 border rounded-xl" />
+
+                    <select onChange={(e) => setDistrict(e.target.value)} className="w-full p-3 border rounded-xl">
+                        <option value="">All Districts</option>
+                        {districtList.sort().map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
+
                     <button onClick={handleSearch} disabled={loading} className="w-full bg-red-600 text-white p-3 rounded-xl font-bold hover:bg-red-700 transition">
                         {loading ? "Searching..." : "Search Donors"}
                     </button>
@@ -56,7 +74,7 @@ export default function DonorSearch() {
                             <a href={`tel:${d.Phone}`} className="bg-green-600 text-white px-5 py-2 rounded-lg font-bold text-sm hover:bg-green-700">Call</a>
                         </div>
                     ))}
-                    {donors.length === 0 && !loading && <p className="text-center text-gray-400">कुनै नतिजा भेटिएन।</p>}
+                    {donors.length === 0 && !loading && <p className="text-center text-gray-400">No donors found.</p>}
                 </div>
             </div>
         </div>
