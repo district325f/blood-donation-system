@@ -15,7 +15,7 @@ export default function DonorSearch() {
         "Dolpa", "Tanahun", "Taplejung", "Tehrathum", "Dang", "Darchula", "Dolakha", "Dhading", "Dhankuta", 
         "Dhanusha", "Nawalpur", "Parasi", "Nuwakot", "Parbat", "Parsa", "Palpa", "Panchthar", "Pyuthan", 
         "Banke", "Bajura", "Baglung", "Bara", "Bajhang", "Bardiya", "Bhaktapur", "Bhojpur", "Makwanpur", 
-        "Manang", "Mahottary", "Mugu", "Mustang", "Morang", "Myagdi", "Rukum East", "Rukum West", "Rupandehi", 
+        "Manang", "Mahottari", "Mugu", "Mustang", "Morang", "Myagdi", "Rukum East", "Rukum West", "Rupandehi", 
         "Rautahat", "Rasuwa", "Ramechhap", "Rolpa", "Lamjung", "Lalitpur", "Sankhuwasabha", "Saptari", 
         "Sarlahi", "Salyan", "Sindhupalchok", "Sindhuli", "Siraha", "Sunsari", "Surkhet", "Solukhumbu", 
         "Syangja", "Humla", "Chitwan", "Jhapa", "Baitadi"
@@ -23,7 +23,7 @@ export default function DonorSearch() {
 
     const handleSearch = async () => {
         if (!bloodGroup || !district) {
-            alert("कृपया ब्लड ग्रुप र जिल्ला दुवै चयन गर्नुहोस् !");
+            alert("कृपया ब्लड ग्रुप र जिल्ला दुवै चयन गर्नुहोस्!");
             return;
         }
         setLoading(true);
@@ -63,13 +63,13 @@ export default function DonorSearch() {
 
                     <div className="space-y-4">
                         {donors.map((d: any, i) => (
-                            <div key={i} className="p-4 border border-slate-200 rounded-xl flex justify-between items-center bg-slate-50">
-                                <div>
-                                    <p className="font-bold text-gray-800">{d.Name}</p>
-                                    <p className="text-sm text-gray-500">{d.BloodGroup} | {d.District}</p>
+                            <div key={i} className="p-4 border border-slate-200 rounded-xl flex justify-between items-center bg-white shadow-sm">
+                                <div className="flex-1 mr-2">
+                                    <p className="font-bold text-gray-900 text-lg">{d.Name}</p>
+                                    <p className="text-sm text-gray-500 font-medium">{d.BloodGroup} | {d.District}</p>
                                 </div>
-                                <button onClick={() => setSelectedDonor(d)} className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-700 transition shadow-sm">
-                                    Contact Donor
+                                <button onClick={() => setSelectedDonor(d)} className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-xs whitespace-nowrap hover:bg-blue-700 transition shadow-sm">
+                                    Contact
                                 </button>
                             </div>
                         ))}
@@ -77,7 +77,6 @@ export default function DonorSearch() {
                 </div>
             </div>
 
-            {/* Modal for Call/WhatsApp */}
             {selectedDonor && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
                     <div className="bg-white p-6 rounded-2xl w-full max-w-sm">
@@ -85,7 +84,7 @@ export default function DonorSearch() {
                         <div className="space-y-3">
                             <a href={`tel:+977${selectedDonor.Phone}`} className="block text-center bg-green-600 text-white py-3 rounded-xl font-bold">Call Now</a>
                             <a 
-                                href={`https://wa.me/+977${selectedDonor.Phone}?text=${encodeURIComponent(`नमस्ते ${selectedDonor.Name} जी, मैले 'Blood Management System' बाट तपाईंको जानकारी पाएको हुँ । ${selectedDonor.BloodGroup} रगतको आवश्यकता परेकोले के तपाईं रक्तदान गर्न सक्नुहुन्छ ? कृपया जानकारी दिनुहोला । धन्यवाद ।`)}`} 
+                                href={`https://wa.me/+977${selectedDonor.Phone}?text=${encodeURIComponent(`नमस्ते ${selectedDonor.Name} जी, मैले 'Blood Management System' बाट तपाईंको जानकारी पाएको हुँ। ${selectedDonor.BloodGroup} रगतको आवश्यकता परेकोले के तपाईं रक्तदान गर्न सक्नुहुन्छ? कृपया जानकारी दिनुहोला। धन्यवाद।`)}`} 
                                 target="_blank" 
                                 className="block text-center bg-emerald-500 text-white py-3 rounded-xl font-bold"
                             >
