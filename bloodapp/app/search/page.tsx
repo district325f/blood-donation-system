@@ -8,36 +8,35 @@ export default function DonorSearch() {
     const [district, setDistrict] = useState('');
     const [loading, setLoading] = useState(false);
     const [selectedDonor, setSelectedDonor] = useState<any>(null);
+    const [searched, setSearched] = useState(false);
 
-    const districtList = [
-        "Achham", "Arghakhanchi", "Ilam", "Udayapur", "Okhaldhunga", "Kanchanpur", "Kapilvastu", "Kathmandu", 
-        "Kavrepalanchok", "Kalikot", "Kaski", "Kailali", "Khotang", "Gulmi", "Jumla", "Dadeldhura", "Doti", 
-        "Dolpa", "Tanahun", "Taplejung", "Tehrathum", "Dang", "Darchula", "Dolakha", "Dhading", "Dhankuta", 
-        "Dhanusha", "Nawalpur", "Parasi", "Nuwakot", "Parbat", "Parsa", "Palpa", "Panchthar", "Pyuthan", 
-        "Banke", "Bajura", "Baglung", "Bara", "Bajhang", "Bardiya", "Bhaktapur", "Bhojpur", "Makwanpur", 
-        "Manang", "Mahottari", "Mugu", "Mustang", "Morang", "Myagdi", "Rukum East", "Rukum West", "Rupandehi", 
-        "Rautahat", "Rasuwa", "Ramechhap", "Rolpa", "Lamjung", "Lalitpur", "Sankhuwasabha", "Saptari", 
-        "Sarlahi", "Salyan", "Sindhupalchok", "Sindhuli", "Siraha", "Sunsari", "Surkhet", "Solukhumbu", 
-        "Syangja", "Humla", "Chitwan", "Jhapa", "Baitadi"
-    ];
+    const districtList = ["Achham", "Arghakhanchi", "Ilam", "Udayapur", "Okhaldhunga", "Kanchanpur", "Kapilvastu", "Kathmandu", "Kavrepalanchok", "Kalikot", "Kaski", "Kailali", "Khotang", "Gulmi", "Jumla", "Dadeldhura", "Doti", "Dolpa", "Tanahun", "Taplejung", "Tehrathum", "Dang", "Darchula", "Dolakha", "Dhading", "Dhankuta", "Dhanusha", "Nawalpur", "Parasi", "Nuwakot", "Parbat", "Parsa", "Palpa", "Panchthar", "Pyuthan", "Banke", "Bajura", "Baglung", "Bara", "Bajhang", "Bardiya", "Bhaktapur", "Bhojpur", "Makwanpur", "Manang", "Mahottari", "Mugu", "Mustang", "Morang", "Myagdi", "Rukum East", "Rukum West", "Rupandehi", "Rautahat", "Rasuwa", "Ramechhap", "Rolpa", "Lamjung", "Lalitpur", "Sankhuwasabha", "Saptari", "Sarlahi", "Salyan", "Sindhupalchok", "Sindhuli", "Siraha", "Sunsari", "Surkhet", "Solukhumbu", "Syangja", "Humla", "Chitwan", "Jhapa", "Baitadi"];
 
     const handleSearch = async () => {
         if (!bloodGroup || !district) {
-            alert("कृपया ब्लड ग्रुप र जिल्ला दुवै चयन गर्नुहोस् !");
+            alert("कृपया ब्लड ग्रुप र जिल्ला दुवै चयन गर्नुहोस्!");
             return;
         }
         setLoading(true);
-        const API_URL = "https://sheetdb.io/api/v1/aznz062wqigwm?sheet=Donors"; 
+        setSearched(false);
+        
+        // Safari को लागि cache busting (Time stamp थपिएको)
+        const API_URL = `https://sheetdb.io/api/v1/aznz062wqigwm?sheet=Donors&_=${new Date().getTime()}`; 
+        
         try {
-            const res = await fetch(API_URL);
+            const res = await fetch(API_URL, { cache: 'no-store' });
             const data = await res.json();
             const filtered = data.filter((d: any) => 
                 d.BloodGroup === bloodGroup &&
                 d.District.toLowerCase() === district.toLowerCase()
             );
             setDonors(filtered);
-        } catch (err) { alert("Error loading data."); } 
-        finally { setLoading(false); }
+            setSearched(true);
+        } catch (err) {
+            alert("डाटा लोड गर्दा समस्या आयो।");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -56,10 +55,14 @@ export default function DonorSearch() {
                             <option value="">Select District</option>
                             {districtList.sort().map(d => <option key={d} value={d}>{d}</option>)}
                         </select>
-                        <button onClick={handleSearch} className="w-full bg-red-600 text-white p-3 rounded-xl font-bold hover:bg-red-700 transition">
+                        <button onClick={handleSearch} disabled={loading} className="w-full bg-red-600 text-white p-3 rounded-xl font-bold hover:bg-red-700 transition">
                             {loading ? "Searching..." : "Search Donors"}
                         </button>
                     </div>
+
+                    {searched && donors.length === 0 && (
+                        <p className="text-center text-gray-500">माफ गर्नुहोस्, यो ब्लड ग्रुप र जिल्लामा हाल कुनै डोनर भेटिएन।</p>
+                    )}
 
                     <div className="space-y-4">
                         {donors.map((d: any, i) => (
@@ -77,6 +80,7 @@ export default function DonorSearch() {
                 </div>
             </div>
 
+            {/* Modal */}
             {selectedDonor && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
                     <div className="bg-white p-6 rounded-2xl w-full max-w-sm">
@@ -84,7 +88,7 @@ export default function DonorSearch() {
                         <div className="space-y-3">
                             <a href={`tel:+977${selectedDonor.Phone}`} className="block text-center bg-green-600 text-white py-3 rounded-xl font-bold">Call Now</a>
                             <a 
-                                href={`https://wa.me/+977${selectedDonor.Phone}?text=${encodeURIComponent(`नमस्ते ${selectedDonor.Name} जी, मैले 'Blood Management System' बाट तपाईंको जानकारी पाएको हुँ । ${selectedDonor.BloodGroup} रगतको आवश्यकता परेकोले के तपाईं रक्तदान गर्न सक्नुहुन्छ ? कृपया जानकारी दिनुहोला । धन्यवाद ।`)}`} 
+                                href={`https://wa.me/+977${selectedDonor.Phone}?text=${encodeURIComponent(`नमस्ते ${selectedDonor.Name} जी, मैले 'Blood Management System' बाट तपाईंको जानकारी पाएको हुँ। ${selectedDonor.BloodGroup} रगतको आवश्यकता परेकोले के तपाईं रक्तदान गर्न सक्नुहुन्छ? कृपया जानकारी दिनुहोला। धन्यवाद।`)}`} 
                                 target="_blank" 
                                 className="block text-center bg-emerald-500 text-white py-3 rounded-xl font-bold"
                             >
