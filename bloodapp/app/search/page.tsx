@@ -21,6 +21,12 @@ export default function DonorSearch() {
     ];
 
     const handleSearch = async () => {
+        // यहाँ दुवै बक्स खाली छ कि छैन चेक गरिन्छ
+        if (!bloodGroup || !district) {
+            alert("कृपया ब्लड ग्रुप र जिल्ला दुवै चयन गर्नुहोस्!");
+            return;
+        }
+
         setLoading(true);
         const API_URL = "https://sheetdb.io/api/v1/aznz062wqigwm?sheet=Donors"; 
         
@@ -29,8 +35,8 @@ export default function DonorSearch() {
             const data = await res.json();
             
             const filtered = data.filter((d: any) => 
-                (bloodGroup ? d.BloodGroup === bloodGroup : true) &&
-                (district ? d.District.toLowerCase() === district.toLowerCase() : true)
+                d.BloodGroup === bloodGroup &&
+                d.District.toLowerCase() === district.toLowerCase()
             );
             setDonors(filtered);
         } catch (err) {
@@ -48,13 +54,15 @@ export default function DonorSearch() {
                     <h2 className="text-2xl font-bold text-red-600 mb-6 text-center">Donor Search</h2>
                     
                     <div className="space-y-4 mb-8">
+                        {/* ब्लड ग्रुपको ठाउँमा "Select Blood Group" लेखिएको बक्स */}
                         <select onChange={(e) => setBloodGroup(e.target.value)} className="w-full p-3 border rounded-xl">
-                            <option value="">All Blood Groups</option>
+                            <option value="">Select Blood Group</option>
                             {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(bg => <option key={bg} value={bg}>{bg}</option>)}
                         </select>
 
+                        {/* जिल्लाको ठाउँमा "Select District" लेखिएको बक्स */}
                         <select onChange={(e) => setDistrict(e.target.value)} className="w-full p-3 border rounded-xl">
-                            <option value="">All Districts</option>
+                            <option value="">Select District</option>
                             {districtList.sort().map(d => <option key={d} value={d}>{d}</option>)}
                         </select>
 
@@ -73,12 +81,11 @@ export default function DonorSearch() {
                                 <a href={`tel:${d.Phone}`} className="bg-green-600 text-white px-5 py-2 rounded-lg font-bold text-sm hover:bg-green-700">Call</a>
                             </div>
                         ))}
-                        {donors.length === 0 && !loading && <p className="text-center text-gray-400">No donors found.</p>}
+                        {donors.length === 0 && !loading && <p className="text-center text-gray-400">कुनै नतिजा भेटिएन, कृपया सही जानकारी छनौट गर्नुहोस्।</p>}
                     </div>
                 </div>
             </div>
 
-            {/* Footer */}
             <footer className="bg-white border-t py-6 text-center text-gray-600 text-sm">
                 <p>Design By: <span className="font-bold text-red-600">Nirajan Aryal</span></p>
                 <p>Contact: <span className="font-bold">9851113811</span></p>
