@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from 'react';
 import Link from 'next/link';
 
@@ -16,20 +16,32 @@ export default function Requests() {
         e.preventDefault();
         setLoading(true);
 
+        // हालको मिति र समय निकाल्ने
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString(); 
+        const formattedTime = now.toLocaleTimeString(); 
+
+        // डाटा र मिति/समयलाई एकसाथ जोड्ने
+        const dataToSend = {
+            ...formData,
+            Date: formattedDate,
+            Time: formattedTime
+        };
+
         const API_URL = "https://sheetdb.io/api/v1/aznz062wqigwm?sheet=Requests";
 
         try {
             const res = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ data: [formData] }),
+                body: JSON.stringify({ data: [dataToSend] }),
             });
 
             if (res.ok) {
-                alert("सफलतापूर्वक Request पठाइयो !");
+                alert("सफलतापूर्वक Request पठाइयो!");
                 setFormData({ PatientName: '', Phone: '', BloodGroup: '', HospitalName: '', Units: '' });
             } else {
-                alert("डेटा पठाउन समस्या भयो । सिटको Headers चेक गर्नुहोस् ।");
+                alert("डेटा पठाउन समस्या भयो । सिटको Headers चेक गर्नुहोस्।");
             }
         } catch (error) {
             alert("सर्भरमा समस्या आयो।");
@@ -63,7 +75,6 @@ export default function Requests() {
                 </div>
             </div>
 
-            {/* फूटर (Footer) */}
             <footer className="bg-white border-t py-6 text-center text-gray-600 text-sm">
                 <p>Design By: <span className="font-bold text-red-600">Nirajan Aryal</span></p>
                 <p>Contact: <span className="font-bold">9851113811</span></p>
