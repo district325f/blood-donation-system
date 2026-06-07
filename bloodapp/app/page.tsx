@@ -25,9 +25,17 @@ export default function Home() {
         <h1 className="text-4xl font-extrabold text-red-600 mb-4">Blood Management System</h1>
         <p className="text-gray-600 mb-8 max-w-lg mx-auto">तपाईंको सानो सहयोगले कसैको जीवन बचाउन सक्छ ।</p>
         
+        {/* तीनवटा बटनहरू */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/register" className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition">Register New Donor</Link>
-          <Link href="/requests" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition">Make a Request</Link>
+          <Link href="/register" className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition">
+            Register New Donor
+          </Link>
+          <Link href="/requests" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition">
+            Make a Request
+          </Link>
+          <Link href="/search" className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition">
+            Donor Search
+          </Link>
         </div>
       </section>
 
@@ -43,7 +51,6 @@ export default function Home() {
             requests.slice().reverse().map((req: any, index: number) => (
               <div key={index} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-xl transition relative">
                 
-                {/* Units Badge */}
                 <div className="absolute top-4 right-4 bg-red-600 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-md uppercase tracking-widest">
                     {req.Units} Units Needed
                 </div>
@@ -55,7 +62,6 @@ export default function Home() {
                 <h3 className="text-xl font-bold text-gray-900">{req.PatientName}</h3>
                 <p className="text-sm text-gray-600 font-medium">Hospital: {req.HospitalName}</p>
                 
-                {/* मिति र समय देखाउने भाग */}
                 <div className="flex justify-between text-[10px] text-gray-500 mt-3 mb-4 font-mono bg-slate-50 p-2 rounded-lg border border-slate-100">
                     <span>📅 {req.Date}</span>
                     <span>🕒 {req.Time}</span>
@@ -74,7 +80,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer Section */}
       <footer className="bg-white border-t py-6 text-center text-gray-600 text-sm">
         <p>Design By: <span className="font-bold text-red-600">Nirajan Aryal</span></p>
         <p>Contact: <span className="font-bold">9851113811</span></p>
