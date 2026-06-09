@@ -11,7 +11,8 @@ export default function Home() {
   const BASE_URL =
     "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec";
 
-  const HOME_URL = `${BASE_URL}?action=homeData`;
+  const REQUESTS_URL = `${BASE_URL}?sheet=Requests`;
+  const SETTINGS_URL = `${BASE_URL}?sheet=Settings`;
 
   const formatDate = (value: any) => {
     if (!value) return "";
@@ -40,15 +41,19 @@ export default function Home() {
     });
   };
 
- useEffect(() => {
-  fetch(HOME_URL)
-    .then((res) => res.json())
-    .then((data) => {
-      setMarqueeText(data.marqueeText || "");
-      setRequests(data.requests || []);
-    })
-    .catch((err) => console.log(err));
-}, []);
+  useEffect(() => {
+    fetch(REQUESTS_URL)
+      .then((res) => res.json())
+      .then((data) => setRequests(data))
+      .catch((err) => console.log(err));
+
+    fetch(SETTINGS_URL)
+      .then((res) => res.json())
+      .then((data) => {
+        const row = data.find(
+          (item: any) =>
+            item.Key?.toString().trim().toLowerCase() === "marqueetext"
+        );
 
         if (row?.Value) {
           setMarqueeText(row.Value);
