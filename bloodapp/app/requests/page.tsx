@@ -16,33 +16,26 @@ export default function Requests() {
         e.preventDefault();
         setLoading(true);
 
-        // हालको मिति र समय निकाल्ने
+        // मिति र समय (सफा फर्म्याटमा)
         const now = new Date();
-        const formattedDate = now.toLocaleDateString(); 
-        const formattedTime = now.toLocaleTimeString(); 
-
-        // डाटा र मिति/समयलाई एकसाथ जोड्ने
         const dataToSend = {
             ...formData,
-            Date: formattedDate,
-            Time: formattedTime
+            Date: now.toLocaleDateString(),
+            Time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
 
-        const API_URL = "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec" + "?sheet=Requests";
+        const API_URL = "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec";
 
         try {
-            const res = await fetch(API_URL, {
+            await fetch(API_URL, {
                 method: 'POST',
+                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ data: [dataToSend] }),
+                body: JSON.stringify(dataToSend),
             });
 
-            if (res.ok) {
-                alert("सफलतापूर्वक Request पठाइयो!");
-                setFormData({ PatientName: '', Phone: '', BloodGroup: '', HospitalName: '', Units: '' });
-            } else {
-                alert("डेटा पठाउन समस्या भयो । सिटको Headers चेक गर्नुहोस्।");
-            }
+            alert("सफलतापूर्वक Request पठाइयो!");
+            setFormData({ PatientName: '', Phone: '', BloodGroup: '', HospitalName: '', Units: '' });
         } catch (error) {
             alert("सर्भरमा समस्या आयो।");
         } finally {
@@ -59,22 +52,18 @@ export default function Requests() {
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <input required type="text" placeholder="Patient Name" value={formData.PatientName} onChange={(e) => setFormData({ ...formData, PatientName: e.target.value })} className="w-full p-3 border rounded-lg" />
                         <input required type="tel" placeholder="Contact Phone Number" value={formData.Phone} onChange={(e) => setFormData({ ...formData, Phone: e.target.value })} className="w-full p-3 border rounded-lg" />
-
                         <select required value={formData.BloodGroup} onChange={(e) => setFormData({ ...formData, BloodGroup: e.target.value })} className="w-full p-3 border rounded-lg">
                             <option value="">Select Blood Group</option>
                             {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(bg => <option key={bg} value={bg}>{bg}</option>)}
                         </select>
-
                         <input required type="text" placeholder="Hospital Name" value={formData.HospitalName} onChange={(e) => setFormData({ ...formData, HospitalName: e.target.value })} className="w-full p-3 border rounded-lg" />
                         <input required type="number" placeholder="Units Needed" value={formData.Units} onChange={(e) => setFormData({ ...formData, Units: e.target.value })} className="w-full p-3 border rounded-lg" />
-
                         <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700 transition">
                             {loading ? "Submitting..." : "Submit Request"}
                         </button>
                     </form>
                 </div>
             </div>
-
             <footer className="bg-white border-t py-6 text-center text-gray-600 text-sm">
                 <p>Design By: <span className="font-bold text-red-600">Nirajan Aryal</span></p>
                 <p>Contact: <span className="font-bold">9851113811</span></p>
