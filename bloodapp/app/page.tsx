@@ -6,13 +6,16 @@ import Image from "next/image";
 
 export default function Home() {
   const [requests, setRequests] = useState<any[]>([]);
+  const [marqueeText, setMarqueeText] = useState("");
 
-  const API_URL =
-    "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec?sheet=Requests";
+  const BASE_URL =
+    "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec";
+
+  const REQUESTS_URL = `${BASE_URL}?sheet=Requests`;
+  const SETTINGS_URL = `${BASE_URL}?sheet=Settings`;
 
   const formatDate = (value: any) => {
     if (!value) return "";
-
     const d = new Date(value);
     if (isNaN(d.getTime())) return value;
 
@@ -26,7 +29,6 @@ export default function Home() {
 
   const formatTime = (value: any) => {
     if (!value) return "";
-
     const d = new Date(value);
     if (isNaN(d.getTime())) return value;
 
@@ -40,15 +42,35 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetch(API_URL)
+    fetch(REQUESTS_URL)
       .then((res) => res.json())
       .then((data) => setRequests(data))
+      .catch((err) => console.log(err));
+
+    fetch(SETTINGS_URL)
+      .then((res) => res.json())
+      .then((data) => {
+        const marqueeRow = data.find(
+          (item: any) =>
+            item.Key?.toString().trim().toLowerCase() === "marqueetext"
+        );
+
+        if (marqueeRow?.Value) {
+          setMarqueeText(marqueeRow.Value);
+        }
+      })
       .catch((err) => console.log(err));
   }, []);
 
   return (
     <main className="min-h-screen bg-slate-50 flex flex-col">
       <section className="bg-white border-b py-10 px-6 text-center">
+        {marqueeText && (
+          <div className="mb-6 bg-red-600 text-white font-bold py-2 rounded-xl overflow-hidden shadow-md">
+            <marquee scrollamount="5">{marqueeText}</marquee>
+          </div>
+        )}
+
         <div className="flex justify-center mb-4">
           <Image
             src="/blood-logo.png"
