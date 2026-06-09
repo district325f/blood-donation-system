@@ -10,7 +10,7 @@ export default function DonorSearch() {
     const [selectedDonor, setSelectedDonor] = useState<any>(null);
     const [searched, setSearched] = useState(false);
 
-    const districtList = ["Achham", "Arghakhanchi", "Ilam", "Udayapur", "Okhaldhunga", "Kanchanpur", "Kapilvastu", "Kathmandu", "Kavrepalanchok", "Kalikot", "Kaski", "Kailali", "Khotang", "Gulmi", "Jumla", "Dadeldhura", "Doti", "Dolpa", "Tanahun", "Taplejung", "Tehrathum", "Dang", "Darchula", "Dolakha", "Dhading", "Dhankuta", "Dhanusha", "Nawalpur", "Parasi", "Nuwakot", "Parbat", "Parsa", "Palpa", "Panchthar", "Pyuthan", "Banke", "Bajura", "Baglung", "Bara", "Bajhang", "Bardiya", "Bhaktapur", "Bhojpur", "Makwanpur", "Manang", "Mahottari", "Mugu", "Mustang", "Morang", "Myagdi", "Rukum East", "Rukum West", "Rupandehi", "Rautahat", "Rasuwa", "Ramechhap", "Rolpa", "Lamjung", "Lalitpur", "Sankhuwasabha", "Saptari", "Sarlahi", "Salyan", "Sindhupalchok", "Sindhuli", "Siraha", "Sunsari", "Surkhet", "Solukhumbu", "Syangja", "Humla", "Chitwan", "Jhapa", "Baitadi"];
+    const districtList = ["Achham", "Arghakhanchi", "Baglung", "Baitadi", "Bajhang", "Bajura", "Banke", "Bara", "Bardiya", "Bhaktapur", "Bhojpur", "Chitwan", "Dadeldhura", "Dailekh", "Dang", "Darchula", "Dhading", "Dhankuta", "Dhanusha", "Dolakha", "Dolpa", "Doti", "Eastern Rukum", "Gorkha", "Gulmi", "Humla", "Ilam", "Jajarkot", "Jhapa", "Jumla", "Kailali", "Kalikot", "Kanchanpur", "Kapilvastu", "Kaski", "Kathmandu", "Kavrepalanchok", "Khotang", "Lalitpur", "Lamjung", "Mahottari", "Makwanpur", "Manang", "Morang", "Mugu", "Mustang", "Myagdi", "Nawalpur", "Parasi", "Nuwakot", "Okhaldhunga", "Palpa", "Panchthar", "Parbat", "Parsa", "Pyuthan", "Ramechhap", "Rasuwa", "Rautahat", "Rolpa", "Rupandehi", "Salyan", "Sankhuwasabha", "Saptari", "Sarlahi", "Sindhuli", "Sindhupalchok", "Siraha", "Solukhumbu", "Sunsari", "Surkhet", "Syangja", "Tanahun", "Taplejung", "Tehrathum", "Udayapur", "Western Rukum"];
 
     const handleSearch = async () => {
         if (!bloodGroup || !district) {
@@ -20,16 +20,18 @@ export default function DonorSearch() {
         setLoading(true);
         setSearched(false);
         
-        // Safari को लागि cache busting (Time stamp थपिएको)
         const API_URL = "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec" + "?sheet=Donors&_=" + new Date().getTime(); 
         
         try {
-            const res = await fetch(API_URL, { cache: 'no-store' });
+            const res = await fetch(API_URL);
             const data = await res.json();
+            
+            // सर्च लजिकलाई थप भरपर्दो बनाइएको
             const filtered = data.filter((d: any) => 
-                d.BloodGroup === bloodGroup &&
-                d.District.toLowerCase() === district.toLowerCase()
+                d.BloodGroup?.trim() === bloodGroup &&
+                d.District?.toString().toLowerCase().trim() === district.toLowerCase().trim()
             );
+            
             setDonors(filtered);
             setSearched(true);
         } catch (err) {
@@ -88,7 +90,7 @@ export default function DonorSearch() {
                         <div className="space-y-3">
                             <a href={`tel:+977${selectedDonor.Phone}`} className="block text-center bg-green-600 text-white py-3 rounded-xl font-bold">Call Now</a>
                             <a 
-                                href={`https://wa.me/+977${selectedDonor.Phone}?text=${encodeURIComponent(`नमस्ते ${selectedDonor.Name} जी, मैले 'Blood Management System' बाट तपाईंको जानकारी पाएको हुँ । ${selectedDonor.BloodGroup} रगतको आवश्यकता परेकोले के तपाईं रक्तदान गर्न सक्नुहुन्छ ? कृपया जानकारी दिनुहोला । धन्यवाद ।`)}`} 
+                                href={`https://wa.me/+977${selectedDonor.Phone}?text=${encodeURIComponent(`नमस्ते ${selectedDonor.Name} जी, मैले 'Blood Management System' बाट तपाईंको जानकारी पाएको हुँ । ${selectedDonor.BloodGroup} रगतको आवश्यकता परेकोले के तपाईं रक्तदान गर्न सक्नुहुन्छ ?`)}`} 
                                 target="_blank" 
                                 className="block text-center bg-emerald-500 text-white py-3 rounded-xl font-bold"
                             >
