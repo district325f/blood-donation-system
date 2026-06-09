@@ -70,7 +70,7 @@ export default function Home() {
               </div>
             ))
           ) : (
-            <p className="text-gray-500 italic">हाल कुनै पनि रिक्वेस्टहरू उपलब्ध छैनन्।</p>
+            <p className="text-gray-500 italic">हाल कुनै पनि रिक्वेस्टहरू उपलब्ध छैनन् ।</p>
           )}
         </div>
       </section>
