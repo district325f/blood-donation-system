@@ -5,10 +5,12 @@ import Image from 'next/image';
 
 export default function Home() {
   const [requests, setRequests] = useState([]);
+  
+  // यहाँ तपाईंको सही Apps Script URL छ
+  const API_URL = "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec";
 
   useEffect(() => {
-    const API_URL = "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec" + "?sheet=Requests";
-    fetch(API_URL)
+    fetch(`${API_URL}?sheet=Requests&_=${new Date().getTime()}`)
       .then((res) => res.json())
       .then((data) => setRequests(data))
       .catch((err) => console.log(err));
@@ -16,30 +18,22 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-50 flex flex-col">
-      {/* Hero Section */}
       <section className="bg-white border-b py-10 px-6 text-center">
         <div className="flex justify-center mb-4">
-           <Image src="/blood-logo.png" alt="Blood Logo" width={100} height={100} />
+           {/* यदि लोगो फाइल छैन भने यो भाग हटाउन सक्नुहुन्छ */}
+           <div className="text-4xl">🩸</div> 
         </div>
         
         <h1 className="text-4xl font-extrabold text-red-600 mb-4">Blood Management System</h1>
         <p className="text-gray-600 mb-8 max-w-lg mx-auto">तपाईंको सानो सहयोगले कसैको जीवन बचाउन सक्छ ।</p>
         
-        {/* तीनवटा बटनहरू */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/register" className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition">
-            Register New Donor
-          </Link>
-          <Link href="/requests" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition">
-            Make a Request
-          </Link>
-          <Link href="/search" className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition">
-            Donor Search
-          </Link>
+          <Link href="/register" className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition">Register New Donor</Link>
+          <Link href="/request" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition">Make a Request</Link>
+          <Link href="/search" className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition">Donor Search</Link>
         </div>
       </section>
 
-      {/* Recent Requests Section */}
       <section className="flex-grow max-w-5xl mx-auto py-10 px-4 w-full">
         <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
           <span className="w-2 h-8 bg-red-600 rounded mr-3"></span>
@@ -50,7 +44,6 @@ export default function Home() {
           {requests && requests.length > 0 ? (
             requests.slice().reverse().map((req: any, index: number) => (
               <div key={index} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-xl transition relative">
-                
                 <div className="absolute top-4 right-4 bg-red-600 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-md uppercase tracking-widest">
                     {req.Units} Units Needed
                 </div>
