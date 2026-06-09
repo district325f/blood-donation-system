@@ -16,7 +16,10 @@ export default function Home() {
     const d = new Date(value);
     if (isNaN(d.getTime())) return value;
 
-    return d.toLocaleDateString("en-CA", {
+    return d.toLocaleDateString("en-US", {
+      month: "numeric",
+      day: "numeric",
+      year: "numeric",
       timeZone: "Asia/Kathmandu",
     });
   };
@@ -28,10 +31,11 @@ export default function Home() {
     if (isNaN(d.getTime())) return value;
 
     return d.toLocaleTimeString("en-US", {
-      timeZone: "Asia/Kathmandu",
-      hour: "2-digit",
+      hour: "numeric",
       minute: "2-digit",
+      second: "2-digit",
       hour12: true,
+      timeZone: "Asia/Kathmandu",
     });
   };
 
