@@ -56,7 +56,7 @@ export default function Register() {
 
       if (checkData.phoneExists) {
         alert(
-          "यो विवरण पहिले नै सिस्टममा सुरक्षित छ। कृपया पुरानो विवरण जाँच गर्नुहोस् वा आवश्यक भए सही मोबाइल नम्बर प्रयोग गर्नुहोस्।"
+          "यो विवरण पहिले नै सिस्टममा सुरक्षित छ । कृपया पुरानो विवरण जाँच गर्नुहोस् वा Blood Management Team संग सम्पर्क गर्नुहोस् ।"
         );
         setLoading(false);
         return;
@@ -64,7 +64,7 @@ export default function Register() {
 
       if (checkData.nameExists) {
         const confirmRegister = window.confirm(
-          "यो नामसँग मिल्दोजुल्दो विवरण पहिले नै भेटियो। कृपया मोबाइल नम्बर र विवरण सही छ कि छैन जाँच गर्नुहोस्।\n\nके तपाईं यो विवरण नयाँ Donor को रूपमा दर्ता गर्न चाहनुहुन्छ?"
+          "यो नामसँग मिल्दोजुल्दो विवरण पहिले नै भेटियो । कृपया मोबाइल नम्बर र विवरण सही छ कि छैन जाँच गर्नुहोस् ।\n\nके तपाईं यो विवरण नयाँ Donor को रूपमा दर्ता गर्न चाहनुहुन्छ ?"
         );
 
         if (!confirmRegister) {
@@ -82,7 +82,7 @@ export default function Register() {
         body: JSON.stringify(formData),
       });
 
-      alert("Donor विवरण सफलतापूर्वक सिस्टममा सुरक्षित भयो।");
+      alert("Donor विवरण सफलतापूर्वक सिस्टममा सुरक्षित भयो ।");
 
       setFormData({
         Name: "",
@@ -91,7 +91,7 @@ export default function Register() {
         District: "",
       });
     } catch (error) {
-      alert("सर्भरमा समस्या आयो। कृपया फेरि प्रयास गर्नुहोस्।");
+      alert("सर्भरमा समस्या आयो । कृपया फेरि प्रयास गर्नुहोस् ।");
     } finally {
       setLoading(false);
     }
