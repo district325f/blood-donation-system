@@ -21,7 +21,7 @@ export default function DonorSearch() {
         setSearched(false);
         
         // Safari को लागि cache busting (Time stamp थपिएको)
-        const API_URL = "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec" + "?sheet=Donors" &_=${new Date().getTime()}`; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec" + "?sheet=Donors&_=" + new Date().getTime(); 
         
         try {
             const res = await fetch(API_URL, { cache: 'no-store' });
