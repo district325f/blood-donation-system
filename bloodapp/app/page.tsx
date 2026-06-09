@@ -16,7 +16,6 @@ export default function Home() {
 
   const formatDate = (value: any) => {
     if (!value) return "";
-
     const d = new Date(value);
     if (isNaN(d.getTime())) return value;
 
@@ -30,7 +29,6 @@ export default function Home() {
 
   const formatTime = (value: any) => {
     if (!value) return "";
-
     const d = new Date(value);
     if (isNaN(d.getTime())) return value;
 
@@ -46,27 +44,19 @@ export default function Home() {
   useEffect(() => {
     fetch(REQUESTS_URL)
       .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setRequests(data);
-        } else {
-          setRequests([]);
-        }
-      })
+      .then((data) => setRequests(data))
       .catch((err) => console.log(err));
 
     fetch(SETTINGS_URL)
       .then((res) => res.json())
       .then((data) => {
-        if (!Array.isArray(data)) return;
-
-        const marqueeRow = data.find(
+        const row = data.find(
           (item: any) =>
             item.Key?.toString().trim().toLowerCase() === "marqueetext"
         );
 
-        if (marqueeRow?.Value) {
-          setMarqueeText(String(marqueeRow.Value));
+        if (row?.Value) {
+          setMarqueeText(row.Value);
         }
       })
       .catch((err) => console.log(err));
@@ -76,9 +66,9 @@ export default function Home() {
     <main className="min-h-screen bg-slate-50 flex flex-col">
       <section className="bg-white border-b py-10 px-6 text-center">
         {marqueeText && (
-          <div className="mb-6 bg-red-600 text-white py-2 rounded-xl overflow-hidden shadow-md">
-            <div className="animate-marquee whitespace-nowrap font-bold">
-              {marqueeText}
+          <div className="bg-red-600 text-white py-2 overflow-hidden rounded-lg mb-6 shadow-md">
+            <div className="marquee">
+              <span>{marqueeText}</span>
             </div>
           </div>
         )}
@@ -183,7 +173,8 @@ export default function Home() {
 
       <footer className="bg-white border-t py-6 text-center text-gray-600 text-sm">
         <p>
-          Design By: <span className="font-bold text-red-600">Nirajan Aryal</span>
+          Design By:{" "}
+          <span className="font-bold text-red-600">Nirajan Aryal</span>
         </p>
         <p>
           Contact: <span className="font-bold">9851113811</span>
