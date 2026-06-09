@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import StatusPopup from "../components/StatusPopup";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -12,6 +13,12 @@ export default function Register() {
   });
 
   const [loading, setLoading] = useState(false);
+
+  const [popup, setPopup] = useState({
+    show: false,
+    type: "loading" as "loading" | "success" | "error" | "warning",
+    message: "",
+  });
 
   const API_URL =
     "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec";
@@ -33,17 +40,30 @@ export default function Register() {
     "Udayapur", "Western Rukum",
   ];
 
+  const closePopup = () => {
+    setPopup({ ...popup, show: false });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
     const phoneClean = formData.Phone.replace(/\D/g, "");
 
     if (phoneClean.length < 10) {
-      alert("कृपया सही मोबाइल नम्बर राख्नुहोस्।");
-      setLoading(false);
+      setPopup({
+        show: true,
+        type: "warning",
+        message: "कृपया सही मोबाइल नम्बर राख्नुहोस् ।",
+      });
       return;
     }
+
+    setLoading(true);
+    setPopup({
+      show: true,
+      type: "loading",
+      message: "Donor विवरण जाँच हुँदैछ...\nकृपया पर्खनुहोस् ।",
+    });
 
     try {
       const checkUrl =
@@ -55,23 +75,37 @@ export default function Register() {
       const checkData = await checkRes.json();
 
       if (checkData.phoneExists) {
-        alert(
-          "यो विवरण पहिले नै सिस्टममा सुरक्षित छ । कृपया पुरानो विवरण जाँच गर्नुहोस् वा Blood Management Team संग सम्पर्क गर्नुहोस् ।"
-        );
+        setPopup({
+          show: true,
+          type: "warning",
+          message:
+            "यो विवरण पहिले नै सिस्टममा सुरक्षित छ।\nकृपया पुरानो विवरण जाँच गर्नुहोस् वा Blood Management Team संग सम्पर्क गर्नुहोस् ।",
+        });
         setLoading(false);
         return;
       }
 
       if (checkData.nameExists) {
         const confirmRegister = window.confirm(
-          "यो नामसँग मिल्दोजुल्दो विवरण पहिले नै भेटियो । कृपया मोबाइल नम्बर र विवरण सही छ कि छैन जाँच गर्नुहोस् ।\n\nके तपाईं यो विवरण नयाँ Donor को रूपमा दर्ता गर्न चाहनुहुन्छ ?"
+          "यो नामसँग मिल्दोजुल्दो विवरण पहिले नै भेटियो ।\nकृपया मोबाइल नम्बर र विवरण सही छ कि छैन जाँच गर्नुहोस् ।\n\nके तपाईं यो विवरण नयाँ Donor को रूपमा दर्ता गर्न चाहनुहुन्छ ?"
         );
 
         if (!confirmRegister) {
+          setPopup({
+            show: true,
+            type: "warning",
+            message: "Donor Registration रोकियो ।",
+          });
           setLoading(false);
           return;
         }
       }
+
+      setPopup({
+        show: true,
+        type: "loading",
+        message: "Donor विवरण सुरक्षित हुँदैछ...\nकृपया पर्खनुहोस् ।",
+      });
 
       await fetch(API_URL, {
         method: "POST",
@@ -82,7 +116,11 @@ export default function Register() {
         body: JSON.stringify(formData),
       });
 
-      alert("Donor विवरण सफलतापूर्वक सिस्टममा सुरक्षित भयो ।");
+      setPopup({
+        show: true,
+        type: "success",
+        message: "Donor विवरण सफलतापूर्वक सिस्टममा सुरक्षित भयो ।",
+      });
 
       setFormData({
         Name: "",
@@ -91,7 +129,11 @@ export default function Register() {
         District: "",
       });
     } catch (error) {
-      alert("सर्भरमा समस्या आयो । कृपया फेरि प्रयास गर्नुहोस् ।");
+      setPopup({
+        show: true,
+        type: "error",
+        message: "सर्भरमा समस्या आयो।\nकृपया फेरि प्रयास गर्नुहोस् ।",
+      });
     } finally {
       setLoading(false);
     }
@@ -99,6 +141,13 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
+      <StatusPopup
+        show={popup.show}
+        type={popup.type}
+        message={popup.message}
+        onClose={closePopup}
+      />
+
       <div className="flex-grow flex items-center justify-center p-4">
         <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md border border-slate-100">
           <Link
@@ -174,7 +223,7 @@ export default function Register() {
               disabled={loading}
               className="w-full bg-red-600 text-white p-3 rounded-lg font-bold hover:bg-red-700 transition disabled:bg-gray-400"
             >
-              {loading ? "Checking..." : "Register Donor"}
+              {loading ? "Please wait..." : "Register Donor"}
             </button>
           </form>
         </div>
