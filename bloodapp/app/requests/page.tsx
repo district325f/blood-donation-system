@@ -17,12 +17,24 @@ export default function Requests() {
         setLoading(true);
 
         // मिति र समय (सफा फर्म्याटमा)
-        const now = new Date();
-        const dataToSend = {
-            ...formData,
-            Date: now.toLocaleDateString(),
-            Time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
+        onst now = new Date();
+
+const dataToSend = {
+  ...formData,
+  Date: now.toLocaleDateString("en-US", {
+    month: "numeric",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "Asia/Kathmandu",
+  }),
+  Time: now.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+    timeZone: "Asia/Kathmandu",
+  }),
+};
 
         const API_URL = "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec";
 
