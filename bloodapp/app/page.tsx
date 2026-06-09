@@ -7,7 +7,7 @@ export default function Home() {
   const [requests, setRequests] = useState([]);
 
   useEffect(() => {
-    const API_URL = "https://sheetdb.io/api/v1/aznz062wqigwm?sheet=Requests";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec" + "?sheet=Requests";
     fetch(API_URL)
       .then((res) => res.json())
       .then((data) => setRequests(data))
