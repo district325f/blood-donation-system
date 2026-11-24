@@ -10,6 +10,7 @@ export default function DonorSearch() {
   const [district, setDistrict] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedDonor, setSelectedDonor] = useState<any>(null);
+  const [contactLoading, setContactLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [popup, setPopup] = useState({
     show: false,
@@ -18,7 +19,7 @@ export default function DonorSearch() {
   });
 
   const API_URL =
-    "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec";
+    "/api/blood";
 
   const districtList = [
     "Achham", "Arghakhanchi", "Baglung", "Baitadi", "Bajhang", "Bajura", "Banke", "Bara", "Bardiya", "Bhaktapur", "Bhojpur", "Chitwan", "Dadeldhura", "Dailekh", "Dang", "Darchula", "Dhading", "Dhankuta", "Dhanusha", "Dolakha", "Dolpa", "Doti", "Eastern Rukum", "Gorkha", "Gulmi", "Humla", "Ilam", "Jajarkot", "Jhapa", "Jumla", "Kailali", "Kalikot", "Kanchanpur", "Kapilvastu", "Kaski", "Kathmandu", "Kavrepalanchok", "Khotang", "Lalitpur", "Lamjung", "Mahottari", "Makwanpur", "Manang", "Morang", "Mugu", "Mustang", "Myagdi", "Nawalpur", "Parasi", "Nuwakot", "Okhaldhunga", "Palpa", "Panchthar", "Parbat", "Parsa", "Pyuthan", "Ramechhap", "Rasuwa", "Rautahat", "Rolpa", "Rupandehi", "Salyan", "Sankhuwasabha", "Saptari", "Sarlahi", "Sindhuli", "Sindhupalchok", "Siraha", "Solukhumbu", "Sunsari", "Surkhet", "Syangja", "Tanahun", "Taplejung", "Tehrathum", "Udayapur", "Western Rukum",
@@ -37,17 +38,13 @@ export default function DonorSearch() {
     setDonors([]);
     setPopup({ show: true, type: "loading", message: "Donor search हुँदैछ...\nकृपया पर्खनुहोस्।" });
 
-    const searchUrl = `${API_URL}?sheet=Donors&_=${new Date().getTime()}`;
+    const searchUrl = `${API_URL}?action=search&bloodGroup=${encodeURIComponent(bloodGroup)}&district=${encodeURIComponent(district)}`;
 
     try {
       const res = await fetch(searchUrl);
       const data = await res.json();
-      const filtered = data.filter((d: any) =>
-        d.BloodGroup?.trim() === bloodGroup &&
-        d.District?.toString().toLowerCase().trim() === district.toLowerCase().trim()
-      );
-
-      setDonors(filtered);
+      if (!res.ok || !Array.isArray(data)) throw new Error("Search failed");
+      setDonors(data);
       setSearched(true);
       setPopup({ show: false, type: "success", message: "" });
     } catch (err) {
@@ -55,6 +52,24 @@ export default function DonorSearch() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleContact = async (donor: any) => {
+    setContactLoading(true);
+    setPopup({ show: true, type: "loading", message: "Please wait..." });
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "contact", token: donor.token }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.Phone) throw new Error("Contact unavailable");
+      setSelectedDonor({ ...donor, Phone: data.Phone });
+      setPopup({ show: false, type: "success", message: "" });
+    } catch {
+      setPopup({ show: true, type: "error", message: "सम्पर्क उपलब्ध भएन । कृपया पुनः खोज्नुहोस् ।" });
+    } finally { setContactLoading(false); }
   };
 
   return (
@@ -90,8 +105,8 @@ export default function DonorSearch() {
                   <p className="font-bold text-gray-900 text-lg">{d.Name}</p>
                   <p className="text-sm text-gray-500 font-medium">{d.BloodGroup} | {d.District}</p>
                 </div>
-                <button onClick={() => setSelectedDonor(d)} className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-xs whitespace-nowrap hover:bg-blue-700 transition shadow-sm">
-                  Contact
+                <button onClick={() => handleContact(d)} disabled={contactLoading || loading} className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-xs whitespace-nowrap hover:bg-blue-700 transition shadow-sm">
+                  {contactLoading ? "Please wait..." : "Contact"}
                 </button>
               </div>
             ))}
@@ -106,8 +121,8 @@ export default function DonorSearch() {
             <div className="space-y-3">
               <a href={`tel:+977${selectedDonor.Phone}`} className="block text-center bg-green-600 text-white py-3 rounded-xl font-bold">Call Now</a>
               <a
-                href={`https://wa.me/+977${selectedDonor.Phone}?text=${encodeURIComponent(`नमस्ते ${selectedDonor.Name} जी, मैले 'Blood Management System' बाट तपाईंको जानकारी पाएको हुँ । ${selectedDonor.BloodGroup} रगतको आवश्यकता परेकोले के तपाईं रक्तदान गर्न सक्नुहुन्छ ? कृपया जानकारी दिनुहोला । धन्यवाद !`)}`}
-                target="_blank"
+                href={`https://wa.me/977${selectedDonor.Phone}?text=${encodeURIComponent(`नमस्ते ${selectedDonor.Name} जी, मैले 'Blood Management System' बाट तपाईंको जानकारी पाएको हुँ । ${selectedDonor.BloodGroup} रगतको आवश्यकता परेकोले के तपाईं रक्तदान गर्न सक्नुहुन्छ ? कृपया जानकारी दिनुहोला । धन्यवाद !`)}`}
+                target="_blank" rel="noopener noreferrer"
                 className="block text-center bg-emerald-500 text-white py-3 rounded-xl font-bold"
               >
                 WhatsApp Message

@@ -19,7 +19,7 @@ export default function Register() {
   });
 
   const API_URL =
-    "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec";
+    "/api/blood";
 
   const districts = [
     "Achham", "Arghakhanchi", "Baglung", "Baitadi", "Bajhang", "Bajura",
@@ -53,12 +53,11 @@ export default function Register() {
     setPopup({ show: true, type: "loading", message: "Donor विवरण जाँच हुँदैछ...\nकृपया पर्खनुहोस्।" });
 
     try {
-      const checkUrl =
-        `${API_URL}?action=checkDonor` +
-        `&phone=${encodeURIComponent(formData.Phone)}` +
-        `&name=${encodeURIComponent(formData.Name)}`;
-
-      const checkRes = await fetch(checkUrl);
+      const checkRes = await fetch(API_URL, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "checkDonor", ...formData }),
+      });
+      if (!checkRes.ok) throw new Error("Check failed");
       const checkData = await checkRes.json();
 
       if (checkData.phoneExists) {
@@ -84,13 +83,18 @@ export default function Register() {
 
       setPopup({ show: true, type: "loading", message: "Donor विवरण सुरक्षित हुँदैछ...\nकृपया पर्खनुहोस्।" });
 
-      await fetch(API_URL, {
+      const saveRes = await fetch(API_URL, {
         method: "POST",
-        mode: "no-cors",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ action: "register", ...formData }),
       });
 
+      const saved = await saveRes.json();
+      if (saved.status === "DUPLICATE_PHONE") {
+        setPopup({ show: true, type: "warning", message: "यो मोबाइल नम्बर पहिले नै दर्ता भएको छ ।" });
+        return;
+      }
+      if (!saveRes.ok || saved.status !== "DONOR_SUCCESS") throw new Error("Save failed");
       setPopup({ show: true, type: "success", message: "Donor विवरण सफलतापूर्वक सिस्टममा सुरक्षित भयो।" });
       setFormData({ Name: "", Phone: "", BloodGroup: "", District: "" });
     } catch (error) {
