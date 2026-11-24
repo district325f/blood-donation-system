@@ -9,10 +9,7 @@ export default function Home() {
   const [marqueeText, setMarqueeText] = useState("");
 
   const BASE_URL =
-    "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec";
-
-  const REQUESTS_URL = `${BASE_URL}?sheet=Requests`;
-  const SETTINGS_URL = `${BASE_URL}?sheet=Settings`;
+    "/api/blood";
 
   const formatDate = (value: any) => {
     if (!value) return "";
@@ -42,24 +39,14 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetch(REQUESTS_URL)
-      .then((res) => res.json())
-      .then((data) => setRequests(data))
-      .catch((err) => console.log(err));
-
-    fetch(SETTINGS_URL)
-      .then((res) => res.json())
-      .then((data) => {
-        const row = data.find(
-          (item: any) =>
-            item.Key?.toString().trim().toLowerCase() === "marqueetext"
-        );
-
-        if (row?.Value) {
-          setMarqueeText(row.Value);
-        }
+    fetch(`${BASE_URL}?action=homeData`, { cache: "no-store" })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Home data unavailable");
+        const data = await res.json();
+        setRequests(data.requests || []);
+        setMarqueeText(data.marqueeText || "");
       })
-      .catch((err) => console.log(err));
+      .catch(() => console.error("Home data unavailable"));
   }, []);
 
   return (

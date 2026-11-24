@@ -20,7 +20,7 @@ export default function Requests() {
   });
 
   const API_URL =
-    "https://script.google.com/macros/s/AKfycbyXSe4JQoCLY_SQ1Nw9ltY6ajLmoIRzLkwORup5bVdqD_eKvU2p_p5TF6wgyFoAjIeU0w/exec";
+    "/api/blood";
 
   const closePopup = () => setPopup({ ...popup, show: false });
 
@@ -48,13 +48,14 @@ export default function Requests() {
     };
 
     try {
-      await fetch(API_URL, {
+      const res = await fetch(API_URL, {
         method: "POST",
-        mode: "no-cors",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dataToSend),
+        body: JSON.stringify({ action: "request", ...dataToSend }),
       });
 
+      const saved = await res.json();
+      if (!res.ok || saved.status !== "REQUEST_SUCCESS") throw new Error("Save failed");
       setPopup({ show: true, type: "success", message: "Blood Request सफलतापूर्वक सिस्टममा सुरक्षित भयो।" });
       setFormData({ PatientName: "", Phone: "", BloodGroup: "", HospitalName: "", Units: "" });
     } catch (error) {
